@@ -18,3 +18,6 @@
   - TreeMap.java
   - LinkedHashMap.java
  - 待定
+## 已翻译内容
+- java.util
+  - List.java
