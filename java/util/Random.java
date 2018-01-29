@@ -73,8 +73,7 @@ import sun.misc.Unsafe;
  * @author  Frank Yellin
  * @since   1.0
  */
-public
-class Random implements java.io.Serializable {
+public class Random implements java.io.Serializable {
     /** use serialVersionUID from JDK 1.1 for interoperability */
     static final long serialVersionUID = 3905348978240129619L;
 

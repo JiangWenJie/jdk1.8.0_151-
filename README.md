@@ -10,6 +10,7 @@
 ## 翻译计划
 - java.util
   - List.java
+  - RandomAccess.java
   - ArrayList.java
   - LinkedList.java
   - Vector.java
@@ -21,3 +22,4 @@
 ## 已翻译内容
 - java.util
   - List.java
+  - RandomAccess.java

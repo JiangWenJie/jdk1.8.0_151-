@@ -33,9 +33,15 @@ import java.util.function.UnaryOperator;
  * Resizable-array implementation of the <tt>List</tt> interface.  Implements
  * all optional list operations, and permits all elements, including
  * <tt>null</tt>.  In addition to implementing the <tt>List</tt> interface,
- * this class provides methods to manipulate the size of the array that is
+ * this class provides methods to manipulate the size of the a
+ * rray that is
  * used internally to store the list.  (This class is roughly equivalent to
  * <tt>Vector</tt>, except that it is unsynchronized.)
+ *
+ * 实现了List 接口的大小可变数组。实现了所有可选列表操作，
+ * 并允许包括 null 在内的所有元素。
+ * 除了实现 List 接口外，此类还提供一些方法来操作内部用来存储列表的数组的大小。
+ * （此类大致上等同于 Vector 类，除了此类是不同步的。）
  *
  * <p>The <tt>size</tt>, <tt>isEmpty</tt>, <tt>get</tt>, <tt>set</tt>,
  * <tt>iterator</tt>, and <tt>listIterator</tt> operations run in constant
@@ -44,6 +50,11 @@ import java.util.function.UnaryOperator;
  * run in linear time (roughly speaking).  The constant factor is low compared
  * to that for the <tt>LinkedList</tt> implementation.
  *
+ * size、isEmpty、get、set、iterator 和 listIterator 操作都以固定时间运行。
+ * add 操作以分摊的固定时间运行，也就是说，添加 n 个元素需要 O(n) 时间。
+ * 其他所有操作都以线性时间运行（大体上讲）。
+ * 与用于 LinkedList 实现的常数因子相比，此实现的常数因子较低。
+ *
  * <p>Each <tt>ArrayList</tt> instance has a <i>capacity</i>.  The capacity is
  * the size of the array used to store the elements in the list.  It is always
  * at least as large as the list size.  As elements are added to an ArrayList,
@@ -51,9 +62,20 @@ import java.util.function.UnaryOperator;
  * specified beyond the fact that adding an element has constant amortized
  * time cost.
  *
+ * 每个 ArrayList 实例都有一个容量。该容量是指用来存储列表元素的数组的大小。
+ * 它总是至少等于列表的大小。随着向 ArrayList 中不断添加元素，其容量也自动增长。
+ * 增长策略的细节没有指定，因为添加元素的时间成本是不变的。
+ *
+ * 我的理解是：当添加元素的时候，目前的实现是直接增加当前容量的1/2，并没有通过
+ * 算法来实现一种特殊的增长大小，为什么要这么做我还不清楚。
+ *
  * <p>An application can increase the capacity of an <tt>ArrayList</tt> instance
  * before adding a large number of elements using the <tt>ensureCapacity</tt>
  * operation.  This may reduce the amount of incremental reallocation.
+ *
+ * 在添加大量元素前，
+ * 应用程序可以使用 ensureCapacity 操作来增加 ArrayList 实例的容量。
+ * 这可以减少自动扩容的次数，提升性能。
  *
  * <p><strong>Note that this implementation is not synchronized.</strong>
  * If multiple threads access an <tt>ArrayList</tt> instance concurrently,
@@ -64,11 +86,22 @@ import java.util.function.UnaryOperator;
  * a structural modification.)  This is typically accomplished by
  * synchronizing on some object that naturally encapsulates the list.
  *
+ * 注意，此实现不是同步的。如果多个线程同时访问一个 ArrayList 实例，
+ * 而其中至少一个线程从结构上修改了列表，那么它必须 保持外部同步。
+ * （结构上的修改是指任何添加或删除一个或多个元素的操作，
+ * 或者显式调整底层数组的大小；仅仅设置元素的值不是结构上的修改。）
+ * 这一般通过对封装List的对象进行同步操作来完成。
+ *
  * If no such object exists, the list should be "wrapped" using the
  * {@link Collections#synchronizedList Collections.synchronizedList}
  * method.  This is best done at creation time, to prevent accidental
  * unsynchronized access to the list:<pre>
  *   List list = Collections.synchronizedList(new ArrayList(...));</pre>
+ *
+ * 如果不存在这样的对象，
+ * 则应该使用 Collections.synchronizedList 方法将该列表“包装”起来。
+ * 这最好在创建时完成，以防止意外对列表进行不同步的访问：
+ * List list = Collections.synchronizedList(new ArrayList(...));
  *
  * <p><a name="fail-fast">
  * The iterators returned by this class's {@link #iterator() iterator} and
@@ -82,6 +115,17 @@ import java.util.function.UnaryOperator;
  * than risking arbitrary, non-deterministic behavior at an undetermined
  * time in the future.
  *
+ * 此类的 iterator 和 listIterator 方法返回的迭代器是快速失败的：
+ * 在创建迭代器之后，除非通过迭代器自身的 remove 或 add 方法从结构上对列表进行修改，
+ * 否则在任何时间以任何方式对列表进行修改，
+ * 迭代器都会抛出 ConcurrentModificationException。
+ * 因此，面对并发的修改，迭代器很快就会完全失败，
+ * 而不是冒着在将来某个不确定时间发生任意不确定行为的风险。
+ *
+ * 简单来说，迭代器会通过modCount来记录集合修改次数，一旦在迭代过程中发现modCount变了，
+ * 就意味着这个集合可能在别的线程中被修改，变得不安全，会抛出ConcurrentModificationException异常，
+ * 这样我们如果在线程中错误的使用了集合就不会产生严重的后果
+ *
  * <p>Note that the fail-fast behavior of an iterator cannot be guaranteed
  * as it is, generally speaking, impossible to make any hard guarantees in the
  * presence of unsynchronized concurrent modification.  Fail-fast iterators
@@ -94,6 +138,13 @@ import java.util.function.UnaryOperator;
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
  *
+ * 注意，迭代器的快速失败行为无法得到保证，
+ * 因为一般来说，不可能对是否出现不同步并发修改做出任何硬性保证。
+ * 快速失败迭代器会尽最大努力抛出 ConcurrentModificationException。
+ * 因此，为提高这类迭代器的正确性而编写一个依赖于此异常的程序是错误的做法：
+ * 迭代器的快速失败行为应该仅用于检测 bug。
+ *
+ * 此类是 Java Collections Framework 的成员。
  * @author  Josh Bloch
  * @author  Neal Gafter
  * @see     Collection

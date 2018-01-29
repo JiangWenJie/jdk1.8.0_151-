@@ -37,6 +37,8 @@ import java.util.function.Consumer;
  * <a href="{@docRoot}/../technotes/guides/language/foreach.html">For-each Loop</a>
  * </strong>
  *
+ * 实现这个接口允许对象成为 "foreach" 语句的目标。
+ *
  * @param <T> the type of elements returned by the iterator
  *
  * @since 1.5
@@ -45,6 +47,8 @@ import java.util.function.Consumer;
 public interface Iterable<T> {
     /**
      * Returns an iterator over elements of type {@code T}.
+     *
+     * 返回一个在一组 T 类型的元素上进行迭代的迭代器。
      *
      * @return an Iterator.
      */
@@ -58,8 +62,13 @@ public interface Iterable<T> {
      * is specified).  Exceptions thrown by the action are relayed to the
      * caller.
      *
+     * 对Iterable的每个元素执行给定的操作，直到所有的元素都被处理或操作抛出异常。
+     * 除非在实现类中指定，否则操作是按照迭代顺序执行的(如果指定了迭代顺序)。
+     * 由操作抛出的异常将被转发给调用者。
+     *
      * @implSpec
      * <p>The default implementation behaves as if:
+     * 默认的实现表现为：
      * <pre>{@code
      *     for (T t : this)
      *         action.accept(t);
